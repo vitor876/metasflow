@@ -1,0 +1,1113 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metas Supervisores 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #fafafa;
+    --bg2: #ffffff;
+    --bg3: #f4f4f5;
+    --border: #e4e4e7;
+    --border2: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #18181b;
+    --accent2: #3f3f46;
+    --green: #16a34a;
+    --amber: #d97706;
+    --red: #dc2626;
+    --green-bg: #f0fdf4;
+    --amber-bg: #fffbeb;
+    --red-bg: #fef2f2;
+    --radius: 8px;
+    --radius-sm: 6px;
+    --font: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+
+  /* ── LOGIN ── */
+  #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+  .login-box { width: 100%; max-width: 360px; padding: 2.5rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04); }
+  .login-logo { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2rem; display: flex; align-items: center; gap: 8px; }
+  .login-logo span { width: 24px; height: 24px; background: var(--text); border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 12px; }
+  .login-box h1 { font-size: 20px; font-weight: 600; margin-bottom: 0.3rem; }
+  .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 1.75rem; }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  .field input { width: 100%; padding: 9px 12px; background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font); font-size: 14px; transition: border-color 0.15s, box-shadow 0.15s; }
+  .field input:focus { outline: none; border-color: var(--text); box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+  .btn-primary { width: 100%; padding: 10px; background: var(--text); color: #fff; border: none; border-radius: var(--radius-sm); font-family: var(--font); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; margin-top: 0.5rem; }
+  .btn-primary:hover { opacity: 0.85; }
+  .login-err { color: var(--red); font-size: 13px; margin-top: 0.75rem; text-align: center; display: none; }
+
+  /* ── APP SHELL ── */
+  #app { display: none; min-height: 100vh; }
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.25rem 0.75rem; z-index: 100; }
+  .sidebar-logo { font-size: 14px; font-weight: 600; color: var(--text); padding: 0 0.5rem; margin-bottom: 1.75rem; display: flex; align-items: center; gap: 8px; }
+  .sidebar-logo span { width: 22px; height: 22px; background: var(--text); border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 11px; flex-shrink: 0; }
+  .nav-section { font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); padding: 0 0.5rem; margin: 1.25rem 0 0.4rem; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--radius-sm); color: var(--muted); font-size: 13.5px; font-weight: 400; cursor: pointer; transition: all 0.1s; margin-bottom: 1px; border: none; background: none; width: 100%; text-align: left; }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: var(--bg3); color: var(--text); font-weight: 500; }
+  .nav-item svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.6; }
+  .nav-item.active svg { opacity: 1; }
+  .sidebar-footer { margin-top: auto; }
+  .user-chip { display: flex; align-items: center; gap: 9px; padding: 9px 10px; background: var(--bg3); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--text); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .user-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-role { font-size: 11px; color: var(--muted); }
+  .btn-logout { background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px; border-radius: 4px; transition: color 0.15s; flex-shrink: 0; }
+  .btn-logout:hover { color: var(--red); }
+
+  /* ── MAIN ── */
+  .main { margin-left: 220px; padding: 2rem 2.5rem; min-height: 100vh; background: var(--bg); }
+  .page { display: none; }
+  .page.active { display: block; }
+  .page-header { margin-bottom: 1.75rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+  .page-header h2 { font-size: 18px; font-weight: 600; }
+  .page-header p { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+  /* ── CARDS / GRID ── */
+  .metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .metric-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+  .metric-card .label { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
+  .metric-card .value { font-size: 22px; font-weight: 600; font-family: var(--mono); color: var(--text); }
+  .metric-card .sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .value.green { color: var(--green); }
+  .value.amber { color: var(--amber); }
+  .value.red { color: var(--red); }
+
+  /* ── TABLE CARD ── */
+  .table-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .table-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+  .table-card-header h3 { font-size: 14px; font-weight: 500; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 12px; font-weight: 500; color: var(--muted); padding: 10px 1.5rem; text-align: left; border-bottom: 1px solid var(--border); background: var(--bg); }
+  th:not(:first-child) { text-align: right; }
+  td { padding: 11px 1.5rem; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
+  td:not(:first-child) { text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg); }
+
+  /* ── BADGES ── */
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #bbf7d0; }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #fde68a; }
+  .badge-red { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
+
+  /* ── PROGRESS BAR ── */
+  .prog { height: 3px; background: var(--bg3); border-radius: 2px; margin-top: 5px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+
+  /* ── FORMS ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  .form-group input, .form-group select { width: 100%; padding: 8px 12px; background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font); font-size: 14px; transition: border-color 0.15s, box-shadow 0.15s; }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--text); box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+
+  /* ── BUTTONS ── */
+  .btn { padding: 7px 14px; border-radius: var(--radius-sm); font-family: var(--font); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+  .btn-accent { background: var(--text); color: #fff; border-color: var(--text); }
+  .btn-accent:hover { opacity: 0.85; }
+  .btn-ghost { background: var(--bg2); color: var(--text); border-color: var(--border2); }
+  .btn-ghost:hover { background: var(--bg3); }
+  .btn-danger { background: var(--red-bg); color: var(--red); border-color: #fecaca; }
+  .btn-danger:hover { background: #fee2e2; }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+  /* ── MONTH SELECTOR ── */
+  .month-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .month-row select, .month-row input { padding: 7px 10px; background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font); font-size: 13px; }
+  .month-row select:focus, .month-row input:focus { outline: none; border-color: var(--text); }
+
+  /* ── SECTION LABEL ── */
+  .section-label { font-size: 11px; font-weight: 500; color: var(--muted); padding: 8px 1.5rem; background: var(--bg); border-bottom: 1px solid var(--border); }
+
+  /* ── INPUT INSIDE TABLE ── */
+  .td-input { width: 90px; padding: 5px 8px; text-align: right; background: var(--bg2); border: 1px solid var(--border2); border-radius: 5px; color: var(--text); font-family: var(--mono); font-size: 13px; transition: border-color 0.15s; }
+  .td-input:focus { outline: none; border-color: var(--text); box-shadow: 0 0 0 2px rgba(0,0,0,0.06); }
+
+  /* ── TOAST ── */
+  #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--text); color: white; border-radius: var(--radius-sm); padding: 10px 16px; font-size: 13px; display: none; z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.15); animation: slideUp 0.2s ease; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .toast-ok { background: #18181b; }
+  .toast-err { background: var(--red); }
+
+  /* ── LOADING ── */
+  .loading { display: flex; align-items: center; justify-content: center; min-height: 200px; color: var(--muted); font-size: 13px; gap: 10px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--text); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── EMPTY STATE ── */
+  .empty { text-align: center; padding: 3rem; color: var(--muted); }
+  .empty p { font-size: 14px; }
+
+  /* ── MODAL ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 500; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; width: 100%; max-width: 440px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+  .modal h3 { font-size: 15px; font-weight: 600; margin-bottom: 1.25rem; }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+
+  /* ── CONFIG INDICATOR ROW ── */
+  .ind-row { display: grid; grid-template-columns: 60px 1fr 80px 80px 80px 40px; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .ind-row:last-child { border-bottom: none; }
+  .ind-row-header { display: grid; grid-template-columns: 60px 1fr 80px 80px 80px 40px; gap: 8px; padding: 6px 0 8px; font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--border2); margin-bottom: 4px; font-weight: 500; }
+  .ind-input { width: 100%; padding: 5px 7px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 5px; color: var(--text); font-family: var(--mono); font-size: 12px; }
+  .ind-input:focus { outline: none; border-color: var(--text); }
+  .cod-badge { display: inline-block; background: var(--bg3); color: var(--text); border: 1px solid var(--border2); border-radius: 4px; padding: 2px 7px; font-family: var(--mono); font-size: 11px; font-weight: 500; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .main { margin-left: 0; padding: 1rem; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo"><span>M</span> MetasFlow</div>
+    <h1>Bem-vindo</h1>
+    <p>Acesse com suas credenciais</p>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com">
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span>M</span> MetasFlow</div>
+
+    <div class="nav-section">Principal</div>
+    <button class="nav-item active" onclick="goTo('painel')" id="nav-painel">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
+      Painel
+    </button>
+    <button class="nav-item" onclick="goTo('lancar')" id="nav-lancar">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      Lançar
+    </button>
+    <button class="nav-item" onclick="goTo('historico')" id="nav-historico">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Histórico
+    </button>
+    <button class="nav-item" onclick="goTo('checklist')" id="nav-checklist">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+      Checklist
+    </button>
+
+    <div id="nav-admin-section" style="display:none">
+      <div class="nav-section">Gestão</div>
+      <button class="nav-item" onclick="goTo('supervisores')" id="nav-supervisores">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Supervisores
+      </button>
+      <button class="nav-item" onclick="goTo('configurar')" id="nav-configurar">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
+        Configurar metas
+      </button>
+      <button class="nav-item" onclick="goTo('relatorio')" id="nav-relatorio">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Relatório geral
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="avatar" id="sidebar-avatar">?</div>
+        <div style="flex:1;min-width:0">
+          <div class="user-name" id="sidebar-name">—</div>
+          <div class="user-role" id="sidebar-role">—</div>
+        </div>
+        <button class="btn-logout" onclick="doLogout()" title="Sair">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- ── PAINEL ── -->
+    <div id="page-painel" class="page active">
+      <div class="page-header">
+        <h2>Painel</h2>
+        <p id="painel-subtitle">Acompanhe seu desempenho</p>
+      </div>
+      <div class="month-row">
+        <select id="painel-mes" onchange="renderPainel()"></select>
+        <span style="font-size:13px;color:var(--muted)" id="painel-supervisor-label"></span>
+      </div>
+      <div class="metric-row" id="painel-metrics"></div>
+      <div class="table-card" id="painel-table-wrap">
+        <div class="loading"><div class="spinner"></div> Carregando...</div>
+      </div>
+    </div>
+
+    <!-- ── LANÇAR ── -->
+    <div id="page-lancar" class="page">
+      <div class="page-header">
+        <h2>Lançar resultados</h2>
+        <p>Registre o realizado do mês</p>
+      </div>
+      <div class="month-row">
+        <select id="lancar-mes" onchange="renderLancar()"></select>
+        <div id="lancar-supervisor-wrap" style="display:none">
+          <select id="lancar-supervisor" onchange="renderLancar()" style="padding:7px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:13px;"></select>
+        </div>
+        <button class="btn btn-accent" onclick="salvarLancamento()">Salvar</button>
+      </div>
+      <div class="table-card" id="lancar-table-wrap">
+        <div class="loading"><div class="spinner"></div> Carregando...</div>
+      </div>
+    </div>
+
+    <!-- ── HISTÓRICO ── -->
+    <div id="page-historico" class="page">
+      <div class="page-header">
+        <h2>Histórico 2026</h2>
+        <p>Visão anual por mês</p>
+      </div>
+      <div id="historico-supervisor-wrap" class="month-row" style="display:none">
+        <select id="hist-supervisor" onchange="renderHistorico()" style="padding:7px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:13px;"></select>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr>
+            <th>Mês</th><th>Prêmio máx.</th><th>Prêmio previsto</th><th>Atingimento</th><th>Status</th>
+          </tr></thead>
+          <tbody id="hist-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── SUPERVISORES (admin) ── -->
+    <div id="page-supervisores" class="page">
+      <div class="page-header">
+        <h2>Supervisores</h2>
+        <p>Gerencie os usuários do sistema</p>
+      </div>
+      <div style="margin-bottom:1.5rem">
+        <button class="btn btn-accent" onclick="openModalSupervisor()">+ Novo supervisor</button>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Ações</th></tr></thead>
+          <tbody id="sup-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── CONFIGURAR METAS (admin) ── -->
+    <div id="page-configurar" class="page">
+      <div class="page-header">
+        <h2>Configurar metas</h2>
+        <p>Defina indicadores e metas por supervisor</p>
+      </div>
+      <div class="month-row">
+        <select id="config-supervisor" onchange="renderConfig()"></select>
+        <select id="config-ano" onchange="renderConfig()">
+          <option value="2026">2026</option><option value="2027">2027</option>
+        </select>
+        <button class="btn btn-accent" onclick="salvarConfig()">Salvar configuração</button>
+      </div>
+      <div class="table-card" id="config-wrap">
+        <div class="loading"><div class="spinner"></div> Carregando...</div>
+      </div>
+    </div>
+
+    <!-- ── RELATÓRIO GERAL (admin) ── -->
+    <div id="page-relatorio" class="page">
+      <div class="page-header">
+        <h2>Relatório geral</h2>
+        <p>Comparativo de todos os supervisores</p>
+      </div>
+      <div class="month-row">
+        <select id="rel-mes" onchange="renderRelatorio()"></select>
+      </div>
+      <div class="metric-row" id="rel-metrics"></div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Supervisor</th><th>Prêmio máx.</th><th>Prêmio previsto</th><th>Atingimento</th><th>Conc.</th><th>Críticas</th><th>Status</th></tr></thead>
+          <tbody id="rel-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── CHECKLIST ── -->
+    <div id="page-checklist" class="page">
+      <div class="page-header">
+        <h2>Checklist mensal</h2>
+        <p>Evidências para validação da diretoria</p>
+      </div>
+      <div class="month-row">
+        <select id="checklist-mes" onchange="renderChecklist()"></select>
+        <div id="checklist-supervisor-wrap" style="display:none">
+          <select id="checklist-supervisor" onchange="renderChecklist()" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:13px;"></select>
+        </div>
+        <span id="checklist-status-label" style="font-size:13px;color:var(--muted)"></span>
+      </div>
+      <div id="checklist-wrap">
+        <div class="loading"><div class="spinner"></div> Carregando...</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ MODAL NOVO SUPERVISOR ══ -->
+<div class="modal-overlay" id="modal-supervisor">
+  <div class="modal">
+    <h3>Novo supervisor</h3>
+    <div class="form-group">
+      <label>Nome completo</label>
+      <input type="text" id="sup-nome" placeholder="Ex: Allan Carvalho">
+    </div>
+    <div class="form-group">
+      <label>E-mail</label>
+      <input type="email" id="sup-email" placeholder="allan@empresa.com">
+    </div>
+    <div class="form-group">
+      <label>Senha inicial</label>
+      <input type="password" id="sup-senha" placeholder="Mínimo 6 caracteres">
+    </div>
+    <div class="form-group">
+      <label>Perfil</label>
+      <select id="sup-perfil">
+        <option value="supervisor">Supervisor</option>
+        <option value="gestor">Gestor (acesso total)</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-supervisor')">Cancelar</button>
+      <button class="btn btn-accent" onclick="criarSupervisor()">Criar usuário</button>
+    </div>
+    <div id="sup-err" style="color:var(--red);font-size:13px;margin-top:0.75rem;display:none"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL EDITAR SUPERVISOR ══ -->
+<div class="modal-overlay" id="modal-editar">
+  <div class="modal">
+    <h3>Editar supervisor</h3>
+    <input type="hidden" id="edit-id">
+    <div class="form-group">
+      <label>Nome completo</label>
+      <input type="text" id="edit-nome" placeholder="Nome do supervisor">
+    </div>
+    <div class="form-group">
+      <label>E-mail</label>
+      <input type="email" id="edit-email" placeholder="email@empresa.com">
+    </div>
+    <div class="form-group">
+      <label>Nova senha <span style="font-size:11px;color:var(--muted)">(deixe em branco para não alterar)</span></label>
+      <input type="password" id="edit-senha" placeholder="Mínimo 6 caracteres">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-editar')">Cancelar</button>
+      <button class="btn btn-accent" onclick="salvarEdicao()">Salvar</button>
+    </div>
+    <div id="edit-err" style="color:var(--red);font-size:13px;margin-top:0.75rem;display:none"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ══════════ CONFIGURAÇÃO SUPABASE ══════════ -->
+<!-- !! SUBSTITUA PELOS SEUS DADOS DO SUPABASE !! -->
+<script>
+const SUPABASE_URL = 'https://fjihtheelpnbjbkcxinh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaWh0aGVlbHBuYmpia2N4aW5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1OTg4MDEsImV4cCI6MjA5NjE3NDgwMX0.LYBYlTfp1dFMTrA3xPaJ2dHL1unI-1UmrHd6AAhnnh0';
+</script>
+
+<script>
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const ANO = 2026;
+const MESES_FULL = MESES.map(m => m + '/' + ANO);
+
+let currentUser = null;
+let currentProfile = null;
+let allSupervisors = [];
+let lancamentoAtual = {};
+
+
+async function init() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) await loginSuccess(session.user);
+  db.auth.onAuthStateChange((_event, session) => {
+    if (!session) showLogin();
+  });
+}
+
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+  if (!email || !pass) { err.textContent = 'Preencha e-mail e senha.'; err.style.display = 'block'; return; }
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
+  if (error) { err.textContent = 'E-mail ou senha inválidos.'; err.style.display = 'block'; return; }
+  await loginSuccess(data.user);
+}
+
+async function loginSuccess(user) {
+  currentUser = user;
+  const { data: profile } = await db.from('profiles').select('*').eq('id', user.id).single();
+  currentProfile = profile;
+  if (profile?.role === 'gestor') {
+    document.getElementById('nav-admin-section').style.display = 'block';
+  }
+  document.getElementById('sidebar-name').textContent = profile?.nome || user.email;
+  document.getElementById('sidebar-role').textContent = profile?.role === 'gestor' ? 'Gestor' : 'Supervisor';
+  const initials = (profile?.nome || user.email).split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  document.getElementById('sidebar-avatar').textContent = initials;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  populateSelects();
+  await loadSupervisors();
+  goTo('painel');
+}
+
+function showLogin() {
+  currentUser = null; currentProfile = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+async function doLogout() {
+  await db.auth.signOut();
+  showLogin();
+}
+
+
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page)?.classList.add('active');
+  if (page === 'painel') renderPainel();
+  if (page === 'lancar') renderLancar();
+  if (page === 'historico') renderHistorico();
+  if (page === 'supervisores') renderSupervisores();
+  if (page === 'configurar') renderConfig();
+  if (page === 'relatorio') renderRelatorio();
+  if (page === 'checklist') renderChecklist();
+}
+
+
+function populateSelects() {
+  const ids = ['painel-mes','lancar-mes','rel-mes','checklist-mes'];
+  const mesAtual = new Date().getMonth();
+  ids.forEach(id => {
+    const s = document.getElementById(id);
+    if (!s) return;
+    s.innerHTML = '';
+    MESES_FULL.forEach((m, i) => {
+      const o = document.createElement('option');
+      o.value = m; o.textContent = m;
+      if (i === mesAtual) o.selected = true;
+      s.appendChild(o);
+    });
+  });
+}
+
+async function loadSupervisors() {
+  const { data } = await db.from('profiles').select('*').order('nome');
+  allSupervisors = data || [];
+  const selects = ['lancar-supervisor','hist-supervisor','config-supervisor','checklist-supervisor'];
+  selects.forEach(id => {
+    const s = document.getElementById(id);
+    if (!s) return;
+    s.innerHTML = '';
+    allSupervisors.forEach(sup => {
+      const o = document.createElement('option');
+      o.value = sup.id; o.textContent = sup.nome;
+      if (sup.id === currentUser.id) o.selected = true;
+      s.appendChild(o);
+    });
+  });
+  if (currentProfile?.role === 'gestor') {
+    document.getElementById('lancar-supervisor-wrap').style.display = 'block';
+    document.getElementById('historico-supervisor-wrap').style.display = 'flex';
+    document.getElementById('checklist-supervisor-wrap').style.display = 'block';
+  } else {
+    document.getElementById('lancar-supervisor-wrap').style.display = 'none';
+    document.getElementById('historico-supervisor-wrap').style.display = 'none';
+    document.getElementById('checklist-supervisor-wrap').style.display = 'none';
+  }
+}
+
+
+function getSupId() {
+  if (currentProfile?.role === 'gestor') {
+    return document.getElementById('lancar-supervisor')?.value || currentUser.id;
+  }
+  return currentUser.id;
+}
+
+function calcAtingimento(ind, real) {
+  if (ind.tipo === 'nivel') {
+    return Math.min((real || 0) / 3, 1);
+  }
+  if (!real || real <= 0 || !ind.meta) return 0;
+  return Math.min(real / ind.meta, 1);
+}
+
+function fmtMoeda(v) { return 'R$ ' + Math.round(v).toLocaleString('pt-BR'); }
+function fmtPct(v) { return Math.round(v * 100) + '%'; }
+
+function badgeHtml(a) {
+  if (a >= 1) return '<span class="badge badge-green">✓ Concluída</span>';
+  if (a >= 0.5) return '<span class="badge badge-amber">Parcial</span>';
+  return '<span class="badge badge-red">Crítica</span>';
+}
+
+function progColor(a) {
+  if (a >= 1) return 'var(--green)';
+  if (a >= 0.5) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+
+async function renderPainel() {
+  const mes = document.getElementById('painel-mes').value;
+  const supId = currentProfile?.role === 'gestor'
+    ? (document.getElementById('lancar-supervisor')?.value || currentUser.id)
+    : currentUser.id;
+
+  document.getElementById('painel-table-wrap').innerHTML = '<div class="loading"><div class="spinner"></div> Carregando...</div>';
+
+  const [{ data: indicadores }, { data: lancamentos }] = await Promise.all([
+    db.from('indicadores').select('*').eq('supervisor_id', supId).eq('ano', ANO).order('ordem'),
+    db.from('lancamentos').select('*').eq('supervisor_id', supId).eq('mes', mes)
+  ]);
+
+  if (!indicadores || indicadores.length === 0) {
+    document.getElementById('painel-table-wrap').innerHTML = '<div class="empty"><p>Nenhuma meta configurada para este supervisor.</p></div>';
+    document.getElementById('painel-metrics').innerHTML = '';
+    return;
+  }
+
+  const lMap = {};
+  (lancamentos || []).forEach(l => { lMap[l.indicador_cod] = l.realizado; });
+
+  let totalPremio = 0, totalMax = 0, conc = 0, crit = 0;
+  indicadores.forEach(ind => {
+    totalMax += ind.premio_max;
+    const real = lMap[ind.cod];
+    if (real !== undefined && real !== null) {
+      const a = calcAtingimento(ind, real);
+      totalPremio += Math.round(a * ind.premio_max);
+      if (a >= 1) conc++;
+      else if (a < 0.5) crit++;
+    } else { crit++; }
+  });
+
+  const pct = totalMax > 0 ? totalPremio / totalMax : 0;
+  const vc = pct >= 1 ? 'green' : pct >= 0.5 ? 'amber' : 'red';
+
+  document.getElementById('painel-metrics').innerHTML = `
+    <div class="metric-card"><div class="label">Prêmio previsto</div><div class="value ${vc}">${fmtMoeda(totalPremio)}</div><div class="sub">de ${fmtMoeda(totalMax)}</div></div>
+    <div class="metric-card"><div class="label">Atingimento</div><div class="value ${vc}">${fmtPct(pct)}</div></div>
+    <div class="metric-card"><div class="label">Concluídas</div><div class="value green">${conc}</div></div>
+    <div class="metric-card"><div class="label">Críticas</div><div class="value ${crit > 0 ? 'red' : 'green'}">${crit}</div></div>`;
+
+  let html = '<table><thead><tr><th>Indicador</th><th>Meta</th><th>Realizado</th><th>Atingimento</th><th>Prêmio</th><th>Status</th></tr></thead><tbody>';
+  const grupos = [...new Set(indicadores.map(i => i.grupo))];
+  grupos.forEach(g => {
+    html += `<tr><td colspan="6" style="padding:0"><div class="section-label">${g}</div></td></tr>`;
+    indicadores.filter(i => i.grupo === g).forEach(ind => {
+      const real = lMap[ind.cod];
+      const tem = real !== undefined && real !== null;
+      const a = tem ? calcAtingimento(ind, real) : 0;
+      const prem = tem ? Math.round(a * ind.premio_max) : 0;
+      const metaFmt = ind.tipo === 'pct' ? fmtPct(ind.meta) : ind.tipo === 'nivel' ? 'Nível 1–3' : ind.meta;
+      const realFmt = tem ? (ind.tipo === 'pct' ? fmtPct(real) : real) : '—';
+      html += `<tr>
+        <td><strong style="font-size:13px">${ind.nome}</strong> <span style="font-size:11px;color:var(--muted)">${ind.cod}</span>
+          <div class="prog"><div class="prog-fill" style="width:${Math.round(a*100)}%;background:${progColor(a)}"></div></div>
+        </td>
+        <td>${metaFmt}</td>
+        <td style="font-family:var(--mono)">${realFmt}</td>
+        <td>${tem ? fmtPct(a) : '—'}</td>
+        <td style="font-family:var(--mono)">${tem ? fmtMoeda(prem) : '—'}</td>
+        <td>${badgeHtml(tem ? a : 0)}</td>
+      </tr>`;
+    });
+  });
+  html += '</tbody></table>';
+  document.getElementById('painel-table-wrap').innerHTML = html;
+}
+
+
+async function renderLancar() {
+  const mes = document.getElementById('lancar-mes').value;
+  const supId = getSupId();
+  document.getElementById('lancar-table-wrap').innerHTML = '<div class="loading"><div class="spinner"></div> Carregando...</div>';
+  lancamentoAtual = {};
+
+  const [{ data: indicadores }, { data: lancamentos }] = await Promise.all([
+    db.from('indicadores').select('*').eq('supervisor_id', supId).eq('ano', ANO).order('ordem'),
+    db.from('lancamentos').select('*').eq('supervisor_id', supId).eq('mes', mes)
+  ]);
+
+  if (!indicadores || indicadores.length === 0) {
+    document.getElementById('lancar-table-wrap').innerHTML = '<div class="empty"><p>Nenhuma meta configurada. O gestor precisa configurar os indicadores primeiro.</p></div>';
+    return;
+  }
+
+  (lancamentos || []).forEach(l => { lancamentoAtual[l.indicador_cod] = l.realizado; });
+
+  let html = '<table><thead><tr><th>Indicador</th><th>Meta</th><th>Realizado</th><th>Atingimento</th><th>Prêmio</th></tr></thead><tbody>';
+  const grupos = [...new Set(indicadores.map(i => i.grupo))];
+  grupos.forEach(g => {
+    html += `<tr><td colspan="5" style="padding:0"><div class="section-label">${g}</div></td></tr>`;
+    indicadores.filter(i => i.grupo === g).forEach(ind => {
+      const val = lancamentoAtual[ind.cod] ?? '';
+      const a = val !== '' ? calcAtingimento(ind, parseFloat(val)) : 0;
+      const prem = val !== '' ? Math.round(a * ind.premio_max) : 0;
+      const metaFmt = ind.tipo === 'pct' ? fmtPct(ind.meta) : ind.tipo === 'nivel' ? 'Nível 1–3' : ind.meta;
+      const step = ind.tipo === 'pct' ? '0.01' : '1';
+      html += `<tr>
+        <td><strong style="font-size:13px">${ind.nome}</strong> <span style="font-size:11px;color:var(--muted)">${ind.cod}</span></td>
+        <td>${metaFmt}</td>
+        <td><input class="td-input" type="number" min="0" step="${step}" value="${val}" data-cod="${ind.cod}" oninput="atualizarCelula(this,'${ind.cod}',${ind.premio_max},${ind.meta},'${ind.tipo}')"></td>
+        <td id="ating-${ind.cod}" style="font-family:var(--mono)">${val !== '' ? fmtPct(a) : '—'}</td>
+        <td id="prem-${ind.cod}" style="font-family:var(--mono)">${val !== '' ? fmtMoeda(prem) : '—'}</td>
+      </tr>`;
+    });
+  });
+  html += '</tbody></table>';
+  document.getElementById('lancar-table-wrap').innerHTML = html;
+}
+
+function atualizarCelula(input, cod, premMax, meta, tipo) {
+  const val = parseFloat(input.value);
+  if (isNaN(val)) { document.getElementById('ating-'+cod).textContent = '—'; document.getElementById('prem-'+cod).textContent = '—'; return; }
+  lancamentoAtual[cod] = val;
+  let a;
+  if (tipo === 'nivel') a = Math.min(val / 3, 1);
+  else a = Math.min(val / meta, 1);
+  document.getElementById('ating-'+cod).textContent = fmtPct(a);
+  document.getElementById('prem-'+cod).textContent = fmtMoeda(Math.round(a * premMax));
+}
+
+async function salvarLancamento() {
+  const mes = document.getElementById('lancar-mes').value;
+  const supId = getSupId();
+  const entries = Object.entries(lancamentoAtual);
+  if (entries.length === 0) { toast('Nenhum valor para salvar.', true); return; }
+
+  const upserts = entries.map(([cod, realizado]) => ({
+    supervisor_id: supId, mes, indicador_cod: cod, realizado
+  }));
+
+  const { error } = await db.from('lancamentos').upsert(upserts, { onConflict: 'supervisor_id,mes,indicador_cod' });
+  if (error) { toast('Erro ao salvar: ' + error.message, true); return; }
+  toast('Lançamento salvo!');
+}
+
+
+async function renderHistorico() {
+  const supId = currentProfile?.role === 'gestor'
+    ? (document.getElementById('hist-supervisor')?.value || currentUser.id)
+    : currentUser.id;
+
+  const [{ data: indicadores }, { data: todos }] = await Promise.all([
+    db.from('indicadores').select('*').eq('supervisor_id', supId).eq('ano', ANO),
+    db.from('lancamentos').select('*').eq('supervisor_id', supId)
+  ]);
+
+  const tbody = document.getElementById('hist-tbody');
+  tbody.innerHTML = '';
+  const totalMax = (indicadores || []).reduce((s, i) => s + i.premio_max, 0);
+
+  MESES_FULL.forEach(mes => {
+    const lsMes = (todos || []).filter(l => l.mes === mes);
+    let prem = 0;
+    let temDados = lsMes.length > 0;
+    lsMes.forEach(l => {
+      const ind = (indicadores || []).find(i => i.cod === l.indicador_cod);
+      if (ind) { const a = calcAtingimento(ind, l.realizado); prem += Math.round(a * ind.premio_max); }
+    });
+    const pct = totalMax > 0 ? prem / totalMax : 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${mes}</td>
+      <td>${fmtMoeda(totalMax)}</td>
+      <td>${temDados ? fmtMoeda(prem) : '—'}</td>
+      <td style="font-family:var(--mono)">${temDados ? fmtPct(pct) : '—'}</td>
+      <td>${temDados ? badgeHtml(pct) : '<span style="font-size:12px;color:var(--muted)">Não lançado</span>'}</td>`;
+
+
+async function renderSupervisores() {
+  const { data } = await db.from('profiles').select('*').order('nome');
+  const tbody = document.getElementById('sup-tbody');
+  tbody.innerHTML = '';
+  (data || []).forEach(sup => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${sup.nome}</strong></td>
+      <td style="color:var(--muted)">${sup.email || '—'}</td>
+      <td>${sup.role === 'gestor' ? '<span class="badge badge-amber">Gestor</span>' : '<span class="badge" style="background:var(--bg3);color:var(--text);border:1px solid var(--border2)">Supervisor</span>'}</td>
+      <td style="display:flex;gap:6px;justify-content:flex-end">
+        <button class="btn btn-ghost btn-sm" onclick="abrirEdicao('${sup.id}','${sup.nome}','${sup.email}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deletarSupervisor('${sup.id}')">Remover</button>
+      </td>`;
+
+function abrirEdicao(id, nome, email) {
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-nome').value = nome;
+  document.getElementById('edit-email').value = email;
+  document.getElementById('edit-senha').value = '';
+  document.getElementById('edit-err').style.display = 'none';
+  document.getElementById('modal-editar').classList.add('open');
+}
+
+async function salvarEdicao() {
+  const id = document.getElementById('edit-id').value;
+  const nome = document.getElementById('edit-nome').value.trim();
+  const email = document.getElementById('edit-email').value.trim();
+  const senha = document.getElementById('edit-senha').value;
+  const err = document.getElementById('edit-err');
+  err.style.display = 'none';
+
+  if (!nome || !email) { err.textContent = 'Nome e e-mail são obrigatórios.'; err.style.display = 'block'; return; }
+
+  const { error: profileError } = await db.from('profiles').update({ nome, email }).eq('id', id);
+  if (profileError) { err.textContent = 'Erro ao salvar: ' + profileError.message; err.style.display = 'block'; return; }
+
+  if (senha) {
+    if (senha.length < 6) { err.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; err.style.display = 'block'; return; }
+    const { error: senhaError } = await db.rpc('atualizar_senha_supervisor', { p_user_id: id, p_nova_senha: senha });
+    if (senhaError) { err.textContent = 'Perfil salvo, mas erro na senha: ' + senhaError.message; err.style.display = 'block'; return; }
+  }
+
+  closeModal('modal-editar');
+  toast('Supervisor atualizado!');
+  await loadSupervisors();
+  renderSupervisores();
+}
+
+function openModalSupervisor() { document.getElementById('modal-supervisor').classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+async function criarSupervisor() {
+  const nome = document.getElementById('sup-nome').value.trim();
+  const email = document.getElementById('sup-email').value.trim();
+  const senha = document.getElementById('sup-senha').value;
+  const role = document.getElementById('sup-perfil').value;
+  const err = document.getElementById('sup-err');
+  err.style.display = 'none';
+  if (!nome || !email || !senha) { err.textContent = 'Preencha todos os campos.'; err.style.display = 'block'; return; }
+
+ const { data, error } = await db.rpc('criar_supervisor', {
+    p_email: email,
+    p_senha: senha,
+    p_nome: nome,
+    p_role: role
+  });
+
+  if (error) { err.textContent = 'Erro: ' + error.message; err.style.display = 'block'; return; }
+  if (data?.success === false) { err.textContent = 'Erro: ' + data.error; err.style.display = 'block'; return; }
+  closeModal('modal-supervisor');
+  toast('Supervisor criado!');
+  await loadSupervisors();
+  renderSupervisores();
+}
+
+async function deletarSupervisor(id) {
+  if (!confirm('Remover este supervisor?')) return;
+  await db.from('profiles').delete().eq('id', id);
+  renderSupervisores();
+}
+
+
+async function renderConfig() {
+  const supId = document.getElementById('config-supervisor').value;
+  const ano = parseInt(document.getElementById('config-ano').value);
+  if (!supId) return;
+  document.getElementById('config-wrap').innerHTML = '<div class="loading"><div class="spinner"></div> Carregando...</div>';
+
+  const { data: inds } = await db.from('indicadores').select('*').eq('supervisor_id', supId).eq('ano', ano).order('ordem');
+
+  const template = inds && inds.length > 0 ? inds : [
+    {cod:'E1',grupo:'Execução',nome:'Visita a clientes',meta:10,premio_max:450,tipo:'num',ordem:1},
+    {cod:'E2',grupo:'Execução',nome:'Reuniões comerciais',meta:4,premio_max:200,tipo:'num',ordem:2},
+    {cod:'E3',grupo:'Execução',nome:'CRM / Funil de vendas',meta:4,premio_max:200,tipo:'num',ordem:3},
+    {cod:'E4',grupo:'Execução',nome:'Treinamento e orientação',meta:4,premio_max:200,tipo:'num',ordem:4},
+    {cod:'E5',grupo:'Execução',nome:'Relatório semanal',meta:4,premio_max:200,tipo:'num',ordem:5},
+    {cod:'R1',grupo:'Resultado',nome:'Meta da unidade',meta:1,premio_max:500,tipo:'nivel',ordem:6},
+    {cod:'R2',grupo:'Resultado',nome:'Positivação de novos clientes',meta:200,premio_max:200,tipo:'num',ordem:7},
+    {cod:'R3',grupo:'Resultado',nome:'Cobertura de clientes ativos',meta:0.6,premio_max:200,tipo:'pct',ordem:8},
+    {cod:'R4',grupo:'Resultado',nome:'Clientes recuperados',meta:30,premio_max:200,tipo:'num',ordem:9},
+    {cod:'R5',grupo:'Resultado',nome:'Clientes novos',meta:15,premio_max:200,tipo:'num',ordem:10},
+  ];
+
+  let html = `<div style="padding:1rem 1.5rem">
+    <div class="ind-row-header"><div>Código</div><div>Nome do indicador</div><div>Meta</div><div>Prêmio máx.</div><div>Tipo</div><div></div></div>`;
+  template.forEach((ind, i) => {
+    html += `<div class="ind-row">
+      <div><span class="cod-badge">${ind.cod}</span></div>
+      <div><input class="ind-input" type="text" value="${ind.nome}" data-field="nome" data-i="${i}"></div>
+      <div><input class="ind-input" type="number" value="${ind.meta}" step="0.01" data-field="meta" data-i="${i}"></div>
+      <div><input class="ind-input" type="number" value="${ind.premio_max}" data-field="premio_max" data-i="${i}"></div>
+      <div><select class="ind-input" data-field="tipo" data-i="${i}">
+        <option value="num" ${ind.tipo==='num'?'selected':''}>Número</option>
+        <option value="pct" ${ind.tipo==='pct'?'selected':''}>Percentual</option>
+        <option value="nivel" ${ind.tipo==='nivel'?'selected':''}>Nível</option>
+      </select></div>
+      <div></div>
+    </div>`;
+  });
+  html += `<div style="margin-top:1rem;color:var(--muted);font-size:12px">Os dados base vêm da sua planilha original. Ajuste conforme necessário.</div></div>`;
+  document.getElementById('config-wrap').innerHTML = html;
+  document.getElementById('config-wrap')._template = template;
+}
+
+async function salvarConfig() {
+  const supId = document.getElementById('config-supervisor').value;
+  const ano = parseInt(document.getElementById('config-ano').value);
+  const wrap = document.getElementById('config-wrap');
+  const template = wrap._template;
+  if (!template) { toast('Carregue a configuração primeiro.', true); return; }
+
+  const rows = wrap.querySelectorAll('.ind-row');
+  const upserts = [];
+  rows.forEach((row, i) => {
+    const ind = { ...template[i] };
+    row.querySelectorAll('[data-field]').forEach(el => {
+      const f = el.dataset.field;
+      ind[f] = el.tagName === 'SELECT' ? el.value : (f === 'nome' ? el.value : parseFloat(el.value));
+    });
+    upserts.push({ ...ind, supervisor_id: supId, ano });
+  });
+
+  await db.from('indicadores').delete().eq('supervisor_id', supId).eq('ano', ano);
+  const { error } = await db.from('indicadores').insert(upserts);
+  if (error) { toast('Erro: ' + error.message, true); return; }
+  toast('Metas salvas!');
+}
+
+
+async function renderRelatorio() {
+  const mes = document.getElementById('rel-mes').value;
+  const tbody = document.getElementById('rel-tbody');
+  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
+
+  const [{ data: todos_inds }, { data: todos_lanc }] = await Promise.all([
+    db.from('indicadores').select('*').eq('ano', ANO),
+    db.from('lancamentos').select('*').eq('mes', mes)
+  ]);
+
+  const metrics = { totalMax: 0, totalPrev: 0, mediaAting: 0, supervisores: allSupervisors.length };
+  tbody.innerHTML = '';
+  let somaAting = 0;
+
+  allSupervisors.forEach(sup => {
+    const inds = (todos_inds || []).filter(i => i.supervisor_id === sup.id);
+    const lancs = (todos_lanc || []).filter(l => l.supervisor_id === sup.id);
+    if (!inds.length) return;
+    const lMap = {};
+    lancs.forEach(l => { lMap[l.indicador_cod] = l.realizado; });
+    const totalMax = inds.reduce((s, i) => s + i.premio_max, 0);
+    let prem = 0, conc = 0, crit = 0;
+    inds.forEach(ind => {
+      const real = lMap[ind.cod];
+      if (real !== undefined && real !== null) {
+        const a = calcAtingimento(ind, real);
+        prem += Math.round(a * ind.premio_max);
+        if (a >= 1) conc++;
+        else if (a < 0.5) crit++;
+      } else { crit++; }
+    });
+    const pct = totalMax > 0 ? prem / totalMax : 0;
+    metrics.totalMax += totalMax;
+    metrics.totalPrev += prem;
+    somaAting += pct;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${sup.nome}</strong></td>
+      <td>${fmtMoeda(totalMax)}</td>
+      <td style="font-family:var(--mono)">${fmtMoeda(prem)}</td>
+      <td style="font-family:var(--mono)">${fmtPct(pct)}</td>
+      <td><span class="badge badge-green">${conc}</span></td>
+      <td><span class="badge badge-red">${crit}</span></td>
+      <td>${badgeHtml(pct)}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  const avg = allSupervisors.length > 0 ? somaAting / allSupervisors.length : 0;
+  const vc = metrics.totalMax > 0 ? metrics.totalPrev / metrics.totalMax : 0;
+  document.getElementById('rel-metrics').innerHTML = `
+    <div class="metric-card"><div class="label">Total prêmios</div><div class="value">${fmtMoeda(metrics.totalMax)}</div></div>
+    <div class="metric-card"><div class="label">Total previsto</div><div class="value ${vc>=1?'green':vc>=0.5?'amber':'red'}">${fmtMoeda(metrics.totalPrev)}</div></div>
+    <div class="metric-card"><div class="label">Média atingimento</div><div class="value ${avg>=1?'green':avg>=0.5?'amber':'red'}">${fmtPct(avg)}</div></div>
+    <div class="metric-card"><div class="label">Supervisores</div><div class="value">${allSupervisors.length}</div></div>`;
+}
+
+
+function toast(msg, err = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = err ? 'toast-err' : 'toast-ok';
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+
+const CHECKLIST_ITENS = [
+  {area:'Planejamento', item:'Apresentar rota do mês e revisão semanal das rotas', ordem:1},
+  {area:'Visitas', item:'Apresentar resumo de visitas realizadas: cliente, cidade, objetivo e resultado', ordem:2},
+  {area:'Reuniões', item:'Apresentar ata da reunião semanal com vendedores', ordem:3},
+  {area:'Reuniões', item:'Apresentar ata da reunião mensal de resultado', ordem:4},
+  {area:'CRM', item:'Apresentar funil atualizado com oportunidades abertas, ganhas e perdidas', ordem:5},
+  {area:'Clientes', item:'Apresentar lista de clientes ativos cobertos e não cobertos', ordem:6},
+  {area:'Clientes', item:'Apresentar clientes inativos recuperados no mês', ordem:7},
+  {area:'Clientes', item:'Apresentar clientes novos que compraram no mês', ordem:8},
+  {area:'Equipe', item:'Apresentar feedbacks, treinamentos e correções feitas com a equipe', ordem:9},
+  {area:'Resultado', item:'Apresentar faturamento da unidade, meta, atingimento e comparativo com mês anterior', ordem:10},
+  {area:'Margem', item:'Apresentar observações sobre descontos, margem e negociações críticas', ordem:11},
+  {area:'Plano de ação', item:'Apresentar 3 prioridades do próximo mês', ordem:12},
+];
+
+function getChecklistSupId() {
+  if (currentProfile?.role === 'gestor') {
+    return document.getElementById('checklist-supervisor')?.value || currentUser.id;
+  }
+  return currentUser.id;
+}
+
+async function renderChecklist() {
+  const mes = document.getElementById('checklist-mes').value;
+  const supId = getChecklistSupId();
+  const wrap = document.getElementById('checklist-wrap');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div> Carregando...</div>';
+
+  const { data: saved } = await db.from('checklist').select('*').eq('supervisor_id', supId).eq('mes', mes);
+  const savedMap = {};
+  (saved || []).forEach(s => { savedMap[s.item] = s; });
+
+  const isGestor = currentProfile?.role === 'gestor';
+  const areas = [...new Set(CHECKLIST_ITENS.map(i => i.area))];
+  const total = CHECKLIST_ITENS.length;
+  const enviados = CHECKLIST_ITENS.filter(i => savedMap[i.item]?.status === 'enviado' || savedMap[i.item]?.status === 'validado').length;
+  const validados = CHECKLIST_ITENS.filter(i => savedMap[i.item]?.status === 'validado').length;
+
+  const pct = Math.round((validados / total) * 100);
+  const vc = pct === 100 ? 'green' : pct > 0 ? 'amber' : 'red';
+  document.getElementById('checklist-status-label').textContent = `${validados}/${total} validados`;
+
+  let html = `<div class="metric-row">
+    <div class="metric-card"><div class="label">Total de itens</div><div class="value">${total}</div></div>
+    <div class="metric-card"><div class="label">Enviados</div><div class="value amber">${enviados}</div></div>
+    <div class="metric-card"><div class="label">Validados</div><div class="value ${vc}">${validados}</div></div>
+    <div class="metric-card"><div class="label">% concluído</div><div class="value ${vc}">${pct}%</div></div>
+  </div>`;
+
+  areas.forEach(area => {
+    const itens = CHECKLIST_ITENS.filter(i => i.area === area);
+    html += `<div class="table-card" style="margin-bottom:1rem">
+      <div style="padding:10px 1.5rem;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;background:var(--bg)">${area}</div>`;
+    itens.forEach(ind => {
+      const s = savedMap[ind.item];
+      const status = s?.status || 'pendente';
+      const evidencia = s?.evidencia || '';
+      const obs = s?.observacao || '';
+      const itemId = ind.ordem;
+
+      const statusBadge = status === 'validado'
+        ? '<span class="badge badge-green">✓ Validado</span>'
+        : status === 'enviado'
+        ? '<span class="badge badge-amber">Aguardando</span>'
+        : status === 'rejeitado'
+        ? '<span class="badge badge-red">Rejeitado</span>'
+        : '<span class="badge" style="background:var(--bg3);color:var(--muted);border:1px solid var(--border2)">Pendente</span>';
+
+      html += `<div style="padding:1rem 1.5rem;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:13px;font-weight:500;margin-bottom:6px">${ind.item}</div>
+            ${statusBadge}
+          </div>
+          <div style="flex:2;min-width:250px">`;
+
+      if (!isGestor) {
+        html += `<div style="margin-bottom:6px">
+            <label style="font-size:11px;font-weight:500;color:var(--muted);display:block;margin-bottom:4px">EVIDÊNCIA / LINK / OBSERVAÇÃO</label>
+            <textarea id="ev-${itemId}" rows="2" style="width:100%;padding:7px 10px;border:1px solid var(--border2);border-radius:6px;font-family:var(--font);font-size:13px;resize:vertical;background:var(--bg2);color:var(--text)">${evidencia}</textarea>
+          </div>
+          <button class="btn btn-accent btn-sm" onclick="enviarItemChecklist(${itemId},'${mes}','${encodeURIComponent(ind.item)}')">Enviar</button>`;
+      } else {
+        html += `<div style="font-size:13px;color:var(--text);background:var(--bg3);padding:8px 10px;border-radius:6px;min-height:40px;margin-bottom:8px">${evidencia || '<span style="color:var(--muted)">Nenhuma evidência enviada</span>'}</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-accent btn-sm" onclick="validarItem(${itemId},'${mes}','${encodeURIComponent(ind.item)}','validado')" ${status !== 'enviado' ? 'disabled style="opacity:0.4"' : ''}>✓ Validar</button>
+            <button class="btn btn-danger btn-sm" onclick="validarItem(${itemId},'${mes}','${encodeURIComponent(ind.item)}','rejeitado')" ${status !== 'enviado' ? 'disabled style="opacity:0.4"' : ''}>✕ Rejeitar</button>
+          </div>`;
+      }
+
+      html += `</div></div></div>`;
+    });
+    html += `</div>`;
+  });
+
+  wrap.innerHTML = html;
+}
+
+async function enviarItemChecklist(ordem, mes, itemEnc) {
+  const item = decodeURIComponent(itemEnc);
+  const supId = currentUser.id;
+  const evidencia = document.getElementById('ev-' + ordem)?.value?.trim();
+  if (!evidencia) { toast('Preencha a evidência antes de enviar.', true); return; }
+  const ind = CHECKLIST_ITENS.find(i => i.ordem === ordem);
+  const { error } = await db.from('checklist').upsert({
+    supervisor_id: supId, mes, area: ind.area, item, ordem,
+    evidencia, status: 'enviado', updated_at: new Date().toISOString()
+  }, { onConflict: 'supervisor_id,mes,item' });
+  if (error) { toast('Erro: ' + error.message, true); return; }
+  toast('Enviado para validação!');
+  renderChecklist();
+}
+
+async function validarItem(ordem, mes, itemEnc, novoStatus) {
+  const item = decodeURIComponent(itemEnc);
+  const supId = getChecklistSupId();
+  const { error } = await db.from('checklist').update({
+    status: novoStatus, validado_por: currentUser.id, validado_em: new Date().toISOString()
+  }).eq('supervisor_id', supId).eq('mes', mes).eq('item', item);
+  if (error) { toast('Erro: ' + error.message, true); return; }
+  toast(novoStatus === 'validado' ? 'Item validado!' : 'Item rejeitado.');
+  renderChecklist();
+}
+
+init();
+</script>
+</body>
+</html>

@@ -441,9 +441,7 @@
 <script>
 const SUPABASE_URL = 'https://fjihtheelpnbjbkcxinh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqaWh0aGVlbHBuYmpia2N4aW5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1OTg4MDEsImV4cCI6MjA5NjE3NDgwMX0.LYBYlTfp1dFMTrA3xPaJ2dHL1unI-1UmrHd6AAhnnh0';
-</script>
 
-<script>
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -456,7 +454,7 @@ let currentProfile = null;
 let allSupervisors = [];
 let lancamentoAtual = {};
 
-
+/* ══ INIT ══ */
 async function init() {
   const { data: { session } } = await db.auth.getSession();
   if (session) await loginSuccess(session.user);
@@ -465,7 +463,7 @@ async function init() {
   });
 }
 
-
+/* ══ LOGIN ══ */
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-password').value;
@@ -506,7 +504,7 @@ async function doLogout() {
   showLogin();
 }
 
-
+/* ══ NAVEGAÇÃO ══ */
 function goTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -521,7 +519,7 @@ function goTo(page) {
   if (page === 'checklist') renderChecklist();
 }
 
-
+/* ══ SELECTS ══ */
 function populateSelects() {
   const ids = ['painel-mes','lancar-mes','rel-mes','checklist-mes'];
   const mesAtual = new Date().getMonth();
@@ -564,7 +562,7 @@ async function loadSupervisors() {
   }
 }
 
-
+/* ══ HELPERS ══ */
 function getSupId() {
   if (currentProfile?.role === 'gestor') {
     return document.getElementById('lancar-supervisor')?.value || currentUser.id;
@@ -595,7 +593,7 @@ function progColor(a) {
   return 'var(--red)';
 }
 
-
+/* ══ PAINEL ══ */
 async function renderPainel() {
   const mes = document.getElementById('painel-mes').value;
   const supId = currentProfile?.role === 'gestor'
@@ -666,7 +664,7 @@ async function renderPainel() {
   document.getElementById('painel-table-wrap').innerHTML = html;
 }
 
-
+/* ══ LANÇAR ══ */
 async function renderLancar() {
   const mes = document.getElementById('lancar-mes').value;
   const supId = getSupId();
@@ -734,7 +732,7 @@ async function salvarLancamento() {
   toast('Lançamento salvo!');
 }
 
-
+/* ══ HISTÓRICO ══ */
 async function renderHistorico() {
   const supId = currentProfile?.role === 'gestor'
     ? (document.getElementById('hist-supervisor')?.value || currentUser.id)
@@ -766,7 +764,7 @@ async function renderHistorico() {
       <td style="font-family:var(--mono)">${temDados ? fmtPct(pct) : '—'}</td>
       <td>${temDados ? badgeHtml(pct) : '<span style="font-size:12px;color:var(--muted)">Não lançado</span>'}</td>`;
 
-
+/* ══ SUPERVISORES (admin) ══ */
 async function renderSupervisores() {
   const { data } = await db.from('profiles').select('*').order('nome');
   const tbody = document.getElementById('sup-tbody');
@@ -849,7 +847,7 @@ async function deletarSupervisor(id) {
   renderSupervisores();
 }
 
-
+/* ══ CONFIGURAR METAS (admin) ══ */
 async function renderConfig() {
   const supId = document.getElementById('config-supervisor').value;
   const ano = parseInt(document.getElementById('config-ano').value);
@@ -916,7 +914,7 @@ async function salvarConfig() {
   toast('Metas salvas!');
 }
 
-
+/* ══ RELATÓRIO GERAL (admin) ══ */
 async function renderRelatorio() {
   const mes = document.getElementById('rel-mes').value;
   const tbody = document.getElementById('rel-tbody');
@@ -973,7 +971,7 @@ async function renderRelatorio() {
     <div class="metric-card"><div class="label">Supervisores</div><div class="value">${allSupervisors.length}</div></div>`;
 }
 
-
+/* ══ TOAST ══ */
 function toast(msg, err = false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -982,7 +980,7 @@ function toast(msg, err = false) {
   setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
-
+/* ══ CHECKLIST ══ */
 const CHECKLIST_ITENS = [
   {area:'Planejamento', item:'Apresentar rota do mês e revisão semanal das rotas', ordem:1},
   {area:'Visitas', item:'Apresentar resumo de visitas realizadas: cliente, cidade, objetivo e resultado', ordem:2},
